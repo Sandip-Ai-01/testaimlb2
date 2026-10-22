@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SISTEC AIML B2 – Computer Fundamentals Test</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{--pri:#1d4ed8;--pri2:#1e3a8a;--bg:#f1f5f9;--card:#fff;--txt:#0f172a;--mut:#64748b;--ok:#16a34a;--bad:#dc2626;--warn:#f59e0b;--bd:#e2e8f0}
+*{box-sizing:border-box}
+body{margin:0;font-family:Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--txt)}
+header{background:linear-gradient(90deg,var(--pri2),var(--pri));color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+header h1{font-size:18px;margin:0}header small{opacity:.85}
+.wrap{max-width:1100px;margin:20px auto;padding:0 14px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.hidden{display:none!important}
+label{display:block;font-weight:600;margin:12px 0 4px}
+input[type=text],input[type=password],textarea,input[type=number]{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;font:inherit}
+textarea{min-height:170px;resize:vertical}
+button{font:inherit;cursor:pointer;border:0;border-radius:8px;padding:10px 18px;background:var(--pri);color:#fff;font-weight:600}
+button:hover{background:var(--pri2)}
+button.sec{background:#e2e8f0;color:var(--txt)}button.sec:hover{background:#cbd5e1}
+button.danger{background:var(--bad)}button.ok{background:var(--ok)}
+ul.rules{line-height:1.7;color:#334155}
+.top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+#timer{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;background:#0f172a;color:#fff;padding:6px 14px;border-radius:8px}
+#timer.low{background:var(--bad);animation:bl 1s infinite}
+@keyframes bl{50%{opacity:.5}}
+.grid{display:grid;grid-template-columns:1fr 280px;gap:16px}
+@media(max-width:820px){.grid{grid-template-columns:1fr}}
+.q{font-size:18px;line-height:1.5;margin:6px 0 16px}
+.opt{display:flex;gap:10px;align-items:center;padding:12px 14px;border:2px solid var(--bd);border-radius:10px;margin:8px 0;cursor:pointer}
+.opt:hover{border-color:#93c5fd}.opt.sel{border-color:var(--pri);background:#eff6ff}
+.nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.pal{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.pal button{padding:7px 0;background:#e2e8f0;color:var(--txt);font-size:13px}
+.pal button.ans{background:var(--ok);color:#fff}.pal button.rev{background:var(--warn);color:#fff}
+.pal button.cur{outline:3px solid var(--pri)}
+.leg{font-size:12px;color:var(--mut);margin-top:10px;line-height:1.8}
+.leg i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:4px;vertical-align:middle}
+h3{margin:14px 0 8px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{border:1px solid var(--bd);padding:8px;text-align:left}th{background:#f8fafc}
+.tw{overflow-x:auto}
+.score{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:14px 0}
+.score div{background:#f8fafc;border:1px solid var(--bd);border-radius:10px;padding:14px;text-align:center}
+.score b{display:block;font-size:26px;color:var(--pri)}
+.badge{display:inline-block;padding:2px 8px;border-radius:99px;font-size:12px;background:#fef3c7;color:#92400e}
+.tag{font-size:12px;background:#dbeafe;color:var(--pri2);padding:2px 8px;border-radius:99px;font-weight:600}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>SISTEC – AIML B2 (First Year)</h1><small>Computer Fundamentals, Operating System &amp; MS Office Test</small></div>
+  <div><button class="sec" onclick="showAdmin()">Teacher Panel</button></div>
+</header>
+<div class="wrap">
+
+<!-- START -->
+<div id="start" class="card">
+  <h2>Student Login</h2>
+  <label>Full Name</label><input type="text" id="sName" placeholder="Aapka naam">
+  <label>Enrollment No.</label><input type="text" id="sEnr" placeholder="e.g. 0101AL25XXXX">
+  <label>Section</label><input type="text" value="AIML B2" disabled>
+  <h3>Instructions</h3>
+  <ul class="rules">
+    <li>Total time: <b>60 minutes</b>. Time khatam hone par test auto-submit ho jayega.</li>
+    <li>Part A: <b>50 MCQ</b> (1 mark each = 50). Part B: <b>10 Subjective</b> (5 marks each = 50). Total = <b>100</b>.</li>
+    <li>MCQ ka result turant milega; subjective answers teacher check karke marks dega.</li>
+    <li>Page refresh karne par timer chalta rahega aur answers save rahenge.</li>
+    <li>Tab/window switch karna record hota hai. Ek enrollment se sirf ek attempt.</li>
+  </ul>
+  <button onclick="startTest()">Start Test</button>
+</div>
+
+<!-- EXAM -->
+<div id="exam" class="hidden">
+  <div class="top card">
+    <div><b id="who"></b> <span class="tag">AIML B2</span></div>
+    <div>Time Left: <span id="timer">60:00</span></div>
+    <button class="danger" onclick="submitTest(false)">Submit Test</button>
+  </div>
+  <div class="grid">
+    <div class="card" id="qbox"></div>
+    <div class="card">
+      <b>Question Palette</b>
+      <h3 style="font-size:13px">Part A – MCQ</h3><div class="pal" id="palA"></div>
+      <h3 style="font-size:13px">Part B – Subjective</h3><div class="pal" id="palB"></div>
+      <div class="leg"><i style="background:var(--ok)"></i>Answered &nbsp;<i style="background:var(--warn)"></i>Marked for review &nbsp;<i style="background:#e2e8f0"></i>Not answered</div>
+    </div>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="result" class="card hidden"></div>
+
+<!-- ADMIN -->
+<div id="admin" class="card hidden">
+  <div class="top"><h2 style="margin:0">Teacher Panel – Scorecard</h2><button class="sec" onclick="location.reload()">← Back</button></div>
+  <div id="adminLogin">
+    <label>Password</label><input type="password" id="adPw" placeholder="Teacher password">
+    <p style="margin-top:12px"><button onclick="adminLogin()">Login</button></p>
+  </div>
+  <div id="adminBody" class="hidden">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+      <button class="ok" onclick="exportAll()">⬇ Download Excel (All Students)</button>
+      <button class="sec" onclick="document.getElementById('imp').click()">⬆ Import Student Files (.json)</button>
+      <input type="file" id="imp" accept=".json" multiple class="hidden" onchange="importFiles(this.files)">
+      <button class="danger" onclick="clearAll()">Clear All Data</button>
+    </div>
+    <div class="tw"><table id="adTable"></table></div>
+    <div id="adDetail"></div>
+  </div>
+</div>
+
+</div>
+
+<script>
+/* ============ CONFIG ============ */
+const DURATION = 60*60;               // seconds
+const ADMIN_PW = "sistec@admin";      // Teacher password – isko badal lijiye
+const RES_KEY = "sistec_aiml_b2_results";
+const ATT_KEY = "sistec_aiml_b2_attempt";
+
+/* ============ QUESTION BANK ============ */
+const MCQ = [
+["Which part of the computer is called its 'brain'?",["Monitor","CPU","Keyboard","Printer"],1],
+["The CPU consists of:",["ALU, Control Unit and Registers","Only ALU","Only RAM and ROM","Monitor and Keyboard"],0],
+["The ALU performs:",["Only data storage","Arithmetic and logical operations","Printing","Networking"],1],
+["Which unit fetches and decodes instructions?",["ALU","Hard disk","Control Unit","Monitor"],2],
+["Registers are:",["Slowest memory","Small, fastest storage inside the CPU","Secondary storage","Optical storage"],1],
+["Which register holds the address of the next instruction?",["Accumulator","Instruction Register","Program Counter","Stack"],2],
+["The bus that carries memory addresses is the:",["Data bus","Address bus","Control bus","Power bus"],1],
+["Which bus is bidirectional?",["Address bus","Data bus","Clock line","Power line"],1],
+["The control bus carries:",["Only data","Only addresses","Control and timing signals","Electric power"],2],
+["Von Neumann architecture is based on:",["Separate memories for data and program","Stored-program concept with a single memory","No memory at all","Only parallel processing"],1],
+["RISC stands for:",["Reduced Instruction Set Computer","Rapid Instruction Set Computer","Real Instruction Set Code","Reduced Internal Set Computer"],0],
+["An instruction set is:",["The set of all commands a CPU can execute","A set of hardware devices","A set of files","A set of keyboard shortcuts"],0],
+["First generation computers used:",["Transistors","Vacuum tubes","Integrated Circuits","Microprocessors"],1],
+["Microprocessors were introduced in which generation?",["Second","Third","Fourth","First"],2],
+["Based on size and power, the most powerful computer is the:",["Microcomputer","Minicomputer","Mainframe","Supercomputer"],3],
+["Which Excel function adds a range of cells?",["ADD","TOTAL","SUM","PLUS"],2],
+["The smallest unit of data in a computer is:",["Byte","Bit","Nibble","Word"],1],
+["1 Byte equals:",["4 bits","8 bits","16 bits","2 bits"],1],
+["1 KB equals:",["1000 bits","1024 bytes","1024 bits","100 bytes"],1],
+["RAM is:",["Non-volatile memory","Volatile main memory","Read-only memory","Secondary storage"],1],
+["ROM is:",["Volatile memory","Non-volatile read-only memory","Temporary memory","An output device"],1],
+["Cache memory sits between:",["CPU and RAM","RAM and hard disk","Disk and printer","Monitor and CPU"],0],
+["Which of these is secondary storage?",["RAM","Cache","Hard disk","Register"],2],
+["Correct speed order (fastest to slowest):",["Hard disk > RAM > Cache > Register","Register > Cache > RAM > Hard disk","RAM > Register > Cache > Disk","Cache > Disk > RAM > Register"],1],
+["Which is an input device?",["Printer","Scanner","Monitor","Speaker"],1],
+["Which is an output device?",["Mouse","Keyboard","Plotter","Light pen"],2],
+["Default file extension of a modern MS Word document is:",[".xlsx",".pptx",".docx",".txt"],2],
+["OCR stands for:",["Optical Code Reader","Output Character Recognition","Optical Character Recognition","Online Character Reading"],2],
+["Which is system software?",["MS Word","Operating System","Tally","Photoshop"],1],
+["Which is application software?",["Linux kernel","Device driver","MS Excel","BIOS"],2],
+["A translator that converts the entire program to machine code at once is a:",["Interpreter","Editor","Compiler","Loader"],2],
+["Computers in e-business are mainly used for:",["Online shopping, payments and order processing","Only gaming","Only weather forecasting","Nothing"],0],
+["Bio-informatics uses computers to:",["Analyse DNA/protein sequence data","Print documents","Play games","Edit videos only"],0],
+["GIS stands for:",["Global Information System","Geographic Information System","General Input System","Graphical Interface System"],1],
+["Remote sensing data is mainly collected using:",["Satellites and sensors","Keyboards","Printers","Modems only"],0],
+["Weather forecasting relies on:",["Supercomputers running numerical models","Typewriters","Only calculators","None of these"],0],
+["Which software is used for 3D animation?",["MS Excel","Blender / Maya","MS Access","Notepad"],1],
+["Multimedia combines:",["Text only","Text, audio, video, graphics and animation","Only audio","Only hardware"],1],
+["Which of the following is an operating system?",["Python","Windows","Chrome","Photoshop"],1],
+["A main function of an OS is:",["Resource management","Only typing documents","Only printing","Only drawing"],0],
+["A process is:",["A program in execution","A stored program","A hardware part","A file"],0],
+["Which is a CPU scheduling algorithm?",["FCFS","FAT","NTFS","BIOS"],0],
+["A batch operating system:",["Is fully interactive","Executes jobs in batches without user interaction","Is only for mobiles","Responds within microseconds"],1],
+["A real-time OS is used in:",["Word processing","Air traffic control / industrial control","Casual browsing","Photo editing"],1],
+["Virtual memory is:",["Use of disk space as an extension of RAM","Extra cache memory","Extra CPU","A type of ROM"],0],
+["Deadlock is a situation where:",["Processes wait forever for each other's resources","Processes run very fast","Memory increases","Disk gets formatted"],0],
+["Which file system is commonly used by Windows?",["NTFS","ext4","HFS+","APFS"],0],
+["Shortcut to save a document in MS Word is:",["Ctrl+S","Ctrl+P","Ctrl+Z","Ctrl+O"],0],
+["In MS PowerPoint, which key starts the slide show from the beginning?",["F1","F5","F7","F12"],1],
+["In MS Excel, every formula must begin with:",["#","=","@","$"],1]
+];
+
+const SUBJ = [
+"Define a computer. Explain the classification of computers on the basis of size, purpose and type of data processed.",
+"Explain the organization of a computer with the help of a block diagram. Describe the role of the CPU and its registers.",
+"What is bus architecture? Explain the data bus, address bus and control bus with their functions.",
+"Differentiate between RAM, ROM, Cache memory and Secondary storage. Give examples of each.",
+"Differentiate between system software and application software with suitable examples. Also explain the instruction set of a CPU.",
+"Explain the applications of computers in e-business, health care and bio-informatics.",
+"Discuss the use of computers in Remote Sensing & GIS, Meteorology & Climatology, Computer Gaming, Multimedia and Animation.",
+"Define an Operating System. Explain its functions and describe the different types of operating systems.",
+"Explain Process Management and Memory Management in an operating system (mention scheduling, paging / segmentation and virtual memory).",
+"Write short notes on MS Word, MS PowerPoint and MS Excel. Give any five useful Excel functions with examples, and explain file management in an OS."
+];
+
+/* ============ STATE ============ */
+const $ = id => document.getElementById(id);
+let S = null, tick = null;
+const NQ = MCQ.length + SUBJ.length;
+
+const getRes = () => { try { return JSON.parse(localStorage.getItem(RES_KEY)) || []; } catch(e){ return []; } };
+const setRes = r => localStorage.setItem(RES_KEY, JSON.stringify(r));
+const saveAtt = () => { try { localStorage.setItem(ATT_KEY, JSON.stringify(S)); } catch(e){} };
+function show(id){ ["start","exam","result","admin"].forEach(x=>$(x).classList.toggle("hidden",x!==id)); window.scrollTo(0,0); }
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ============ START / RESUME ============ */
+function startTest(){
+  const name=$("sName").value.trim(), enr=$("sEnr").value.trim().toUpperCase();
+  if(name.length<3||enr.length<4){ alert("Sahi Name aur Enrollment No. bharein."); return; }
+  if(getRes().some(r=>r.enr===enr)){ alert("Is enrollment number se test pehle hi submit ho chuka hai."); return; }
+  S={name,enr,start:Date.now(),ans:Array(MCQ.length).fill(null),rev:Array(NQ).fill(false),sub:Array(SUBJ.length).fill(""),cur:0,tabs:0};
+  saveAtt(); beginExam();
+}
+function beginExam(){
+  $("who").textContent=S.name+" ("+S.enr+")";
+  buildPalette(); render(); show("exam");
+  clearInterval(tick); tick=setInterval(updateTimer,500); updateTimer();
+}
+function updateTimer(){
+  const left=Math.max(0,DURATION-Math.floor((Date.now()-S.start)/1000));
+  const m=String(Math.floor(left/60)).padStart(2,"0"), s=String(left%60).padStart(2,"0");
+  $("timer").textContent=m+":"+s; $("timer").classList.toggle("low",left<=300);
+  if(left<=0){ submitTest(true); }
+}
+document.addEventListener("visibilitychange",()=>{ if(S && document.hidden && !$("exam").classList.contains("hidden")){ S.tabs++; saveAtt(); } });
+
+/* ============ RENDER ============ */
+function buildPalette(){
+  $("palA").innerHTML=MCQ.map((_,i)=>`<button id="p${i}" onclick="go(${i})">${i+1}</button>`).join("");
+  $("palB").innerHTML=SUBJ.map((_,i)=>`<button id="p${MCQ.length+i}" onclick="go(${MCQ.length+i})">S${i+1}</button>`).join("");
+}
+function isAnswered(i){ return i<MCQ.length ? S.ans[i]!==null : S.sub[i-MCQ.length].trim().length>0; }
+function refreshPalette(){
+  for(let i=0;i<NQ;i++){
+    const b=$("p"+i); b.className=(i===S.cur?"cur ":"")+(S.rev[i]?"rev":isAnswered(i)?"ans":"");
+  }
+}
+function go(i){ S.cur=i; saveAtt(); render(); }
+function render(){
+  const i=S.cur; let h="";
+  if(i<MCQ.length){
+    const q=MCQ[i];
+    h=`<span class="tag">Part A · Q${i+1} of ${MCQ.length} · 1 mark</span><div class="q">${esc(q[0])}</div>`+
+      q[1].map((o,k)=>`<div class="opt ${S.ans[i]===k?"sel":""}" onclick="pick(${i},${k})"><b>${"ABCD"[k]}.</b> ${esc(o)}</div>`).join("");
+  } else {
+    const j=i-MCQ.length;
+    h=`<span class="tag">Part B · Subjective ${j+1} of ${SUBJ.length} · 5 marks</span><div class="q">${esc(SUBJ[j])}</div>
+       <textarea id="sub" placeholder="Apna answer yahan likhein..." oninput="saveSub(${j},this.value)">${esc(S.sub[j])}</textarea>`;
+  }
+  h+=`<div class="nav">
+    <button class="sec" onclick="go(Math.max(0,S.cur-1))">← Previous</button>
+    <button class="sec" onclick="clearAns()">Clear</button>
+    <button style="background:var(--warn)" onclick="toggleRev()">${S.rev[i]?"Unmark Review":"Mark for Review"}</button>
+    <button onclick="go(Math.min(NQ-1,S.cur+1))">Next →</button></div>`;
+  $("qbox").innerHTML=h; refreshPalette();
+}
+function pick(i,k){ S.ans[i]=k; saveAtt(); render(); }
+function saveSub(j,v){ S.sub[j]=v; saveAtt(); refreshPalette(); }
+function clearAns(){ if(S.cur<MCQ.length) S.ans[S.cur]=null; else S.sub[S.cur-MCQ.length]=""; saveAtt(); render(); }
+function toggleRev(){ S.rev[S.cur]=!S.rev[S.cur]; saveAtt(); render(); }
+
+/* ============ SUBMIT ============ */
+function submitTest(auto){
+  if(!S) return;
+  if(!auto){
+    const a=S.ans.filter(x=>x!==null).length, s=S.sub.filter(x=>x.trim()).length;
+    if(!confirm(`MCQ attempted: ${a}/${MCQ.length}\nSubjective attempted: ${s}/${SUBJ.length}\n\nKya aap test submit karna chahte hain?`)) return;
+  }
+  clearInterval(tick);
+  let c=0,w=0,u=0;
+  S.ans.forEach((a,i)=>{ if(a===null)u++; else if(a===MCQ[i][2])c++; else w++; });
+  const taken=Math.min(DURATION,Math.floor((Date.now()-S.start)/1000));
+  const rec={name:S.name,enr:S.enr,section:"AIML B2",correct:c,wrong:w,unattempted:u,mcq:c,subj:null,
+    taken,tabs:S.tabs,at:new Date().toLocaleString("en-IN"),mcqAns:S.ans,subAns:S.sub,auto:!!auto};
+  const all=getRes().filter(r=>r.enr!==rec.enr); all.push(rec); setRes(all);
+  localStorage.removeItem(ATT_KEY);
+  S=null; showResult(rec);
+}
+const fmtT = s => Math.floor(s/60)+" min "+(s%60)+" sec";
+function showResult(r){
+  $("result").innerHTML=`<h2>Test Submitted ✔${r.auto?" (auto-submitted)":""}</h2>
+  <p><b>${esc(r.name)}</b> · ${esc(r.enr)} · ${r.section}</p>
+  <div class="score">
+    <div><b>${r.mcq}/50</b>MCQ Marks</div>
+    <div><b>${r.correct}</b>Correct</div>
+    <div><b>${r.wrong}</b>Wrong</div>
+    <div><b>${r.unattempted}</b>Not Attempted</div>
+    <div><b>${r.subj===null?"Pending":r.subj+"/50"}</b>Subjective</div>
+  </div>
+  <p>Time taken: ${fmtT(r.taken)} · Tab switches: ${r.tabs}</p>
+  <p class="badge">Subjective marks teacher check karne ke baad add honge.</p>
+  <p style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap">
+    <button class="ok" onclick='downloadOne(${JSON.stringify(r.enr)})'>⬇ Download my Scorecard (Excel)</button>
+    <button class="sec" onclick='downloadJson(${JSON.stringify(r.enr)})'>⬇ Result file (.json) – teacher ko dein</button>
+    <button class="sec" onclick="location.reload()">New Student</button>
+  </p>
+  <p style="color:var(--mut);font-size:13px">Note: Result is browser mein save hota hai. Agar teacher ke computer se alag device par test diya hai, to .json file teacher ko bhejein.</p>`;
+  show("result");
+}
+
+/* ============ EXCEL EXPORT ============ */
+function rowFor(r,i){
+  const sub=r.subj===null||r.subj===undefined?"":Number(r.subj);
+  const total=sub===""?"":r.mcq+sub;
+  return {"Sr No":i+1,"Name":r.name,"Enrollment No":r.enr,"Section":r.section,"MCQ Correct":r.correct,"MCQ Wrong":r.wrong,
+    "Not Attempted":r.unattempted,"MCQ Marks (50)":r.mcq,"Subjective Marks (50)":sub,"Total (100)":total,
+    "Percentage":total===""?"":+(total).toFixed(1),"Time Taken":fmtT(r.taken),"Tab Switches":r.tabs,"Submitted At":r.at};
+}
+function ansRows(list){
+  const rows=[];
+  list.forEach(r=>{ const o={"Name":r.name,"Enrollment No":r.enr};
+    SUBJ.forEach((_,j)=>o["S"+(j+1)]=(r.subAns&&r.subAns[j])||""); rows.push(o); });
+  return rows;
+}
+function writeBook(list,fname){
+  if(typeof XLSX==="undefined"){ // offline fallback: CSV
+    const rows=list.map(rowFor), keys=Object.keys(rows[0]||{});
+    const csv=[keys.join(",")].concat(rows.map(o=>keys.map(k=>'"'+String(o[k]).replace(/"/g,'""')+'"').join(","))).join("\n");
+    const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv"}));
+    a.download=fname.replace(".xlsx",".csv"); a.click(); return;
+  }
+  const wb=XLSX.utils.book_new();
+  const ws=XLSX.utils.json_to_sheet(list.map(rowFor));
+  ws["!cols"]=[6,22,18,10,12,10,13,14,20,12,11,16,12,22].map(w=>({wch:w}));
+  XLSX.utils.book_append_sheet(wb,ws,"Scorecard");
+  const ws2=XLSX.utils.json_to_sheet(ansRows(list)); ws2["!cols"]=[{wch:22},{wch:18}].concat(SUBJ.map(()=>({wch:60})));
+  XLSX.utils.book_append_sheet(wb,ws2,"Subjective Answers");
+  XLSX.writeFile(wb,fname);
+}
+function downloadOne(enr){ const r=getRes().find(x=>x.enr===enr); if(r) writeBook([r],"Scorecard_"+enr+".xlsx"); }
+function downloadJson(enr){ const r=getRes().find(x=>x.enr===enr); if(!r) return;
+  const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([JSON.stringify(r)],{type:"application/json"}));
+  a.download="result_"+enr+".json"; a.click(); }
+function exportAll(){ const l=getRes(); if(!l.length){alert("Koi result nahi hai.");return;}
+  l.sort((a,b)=>a.name.localeCompare(b.name)); writeBook(l,"AIML_B2_Scorecard_All_Students.xlsx"); }
+
+/* ============ ADMIN ============ */
+function showAdmin(){ show("admin"); }
+function adminLogin(){
+  if($("adPw").value!==ADMIN_PW){ alert("Galat password"); return; }
+  $("adminLogin").classList.add("hidden"); $("adminBody").classList.remove("hidden"); renderAdmin();
+}
+function renderAdmin(){
+  const l=getRes().sort((a,b)=>a.name.localeCompare(b.name));
+  $("adTable").innerHTML=`<tr><th>#</th><th>Name</th><th>Enrollment</th><th>MCQ /50</th><th>Subjective /50</th><th>Total /100</th><th>Time</th><th>Tabs</th><th>Answers</th></tr>`+
+   (l.length?l.map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.name)}</td><td>${esc(r.enr)}</td><td>${r.mcq}</td>
+    <td><input type="number" min="0" max="50" style="width:80px" value="${r.subj??""}" onchange="setSubj('${esc(r.enr)}',this.value)"></td>
+    <td id="t_${esc(r.enr)}">${r.subj==null?"—":r.mcq+r.subj}</td><td>${fmtT(r.taken)}</td><td>${r.tabs}</td>
+    <td><button class="sec" onclick="viewAns('${esc(r.enr)}')">View</button></td></tr>`).join(""):`<tr><td colspan="9">Abhi tak koi student ne test submit nahi kiya.</td></tr>`);
+}
+function setSubj(enr,v){
+  const l=getRes(), r=l.find(x=>x.enr===enr); if(!r) return;
+  let n=v===""?null:Math.max(0,Math.min(50,Number(v))); r.subj=n; setRes(l);
+  $("t_"+enr).textContent=n===null?"—":r.mcq+n;
+}
+function viewAns(enr){
+  const r=getRes().find(x=>x.enr===enr); if(!r) return;
+  $("adDetail").innerHTML=`<h3>${esc(r.name)} – Subjective Answers</h3>`+SUBJ.map((q,j)=>
+    `<p><b>S${j+1}. ${esc(q)}</b></p><div style="white-space:pre-wrap;background:#f8fafc;border:1px solid var(--bd);border-radius:8px;padding:10px">${esc((r.subAns&&r.subAns[j])||"— no answer —")}</div>`).join("");
+  $("adDetail").scrollIntoView({behavior:"smooth"});
+}
+function importFiles(files){
+  let n=0,done=0;
+  [...files].forEach(f=>{ const rd=new FileReader();
+    rd.onload=()=>{ try{ const r=JSON.parse(rd.result); const l=getRes().filter(x=>x.enr!==r.enr); l.push(r); setRes(l); n++; }catch(e){}
+      if(++done===files.length){ alert(n+" result file(s) import hue."); renderAdmin(); } };
+    rd.readAsText(f); });
+}
+function clearAll(){ if(confirm("Saare results delete ho jayenge. Pehle Excel download kar lein. Continue?")) { setRes([]); renderAdmin(); $("adDetail").innerHTML=""; } }
+
+/* ============ RESUME ON LOAD ============ */
+window.addEventListener("load",()=>{
+  try{ const a=JSON.parse(localStorage.getItem(ATT_KEY)); if(a&&a.start){ S=a;
+    if(getRes().some(r=>r.enr===S.enr)){ localStorage.removeItem(ATT_KEY); S=null; return; }
+    beginExam(); } }catch(e){}
+});
+</script>
+</body>
+</html>
